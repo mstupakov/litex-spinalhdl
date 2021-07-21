@@ -27,6 +27,9 @@ class SuperTop(FRQ_IN: HertzNumber = 10 MHz) extends Component {
 
     val btns = in  Bits(8 bits)
     val leds = out Bits(8 bits)
+
+    val uart_rx = in  Bool()
+    val uart_tx = out Bool()
   }
 
   val sys_cd = ClockDomain(io.clk_25mhz, io.rst, frequency = FixedFrequency(FRQ_IN))
@@ -42,35 +45,20 @@ class SuperTop(FRQ_IN: HertzNumber = 10 MHz) extends Component {
   }
 
   io.leds(0) := io.btns(3)
+  io.uart_tx := io.uart_rx
 }
 
 object MyTopLevelVerilog {
   def main(args: Array[String]) : Unit = {
-    println("...........Begin")
-    //System.exit(1)
+    println("...........SpinalHDL Starting")
 
-    val TTT = new SpinalConfig(
-//      defaultConfigForClockDomains = ClockDomainConfig(
-//        resetKind = SYNC,
-//        resetActiveLevel = LOW
-//        ),
-      defaultClockDomainFrequency = FixedFrequency(25 MHz),
+    new SpinalConfig(
+      mode            = Verilog,
+      device          = Device(vendor = "lattice"),
       targetDirectory = "output/",
-      mode=Verilog,
-      rtlHeader="++++++++++",
-      oneFilePerComponent=false,
-      globalPrefix="",
-      device=Device(vendor = "lattice"),
-      //inlineRom=true,
-      //mergeAsyncProcess=true,
-      anonymSignalUniqueness=true,
-      anonymSignalPrefix="sig"
-    //).generate(new SuperTop).printPruned()
+      defaultClockDomainFrequency = FixedFrequency(25 MHz)
     ).generate(InOutWrapper(new SuperTop(25 MHz))).printPruned()
 
-  //report.mergeRTLSource("mergeRTL")
-    //SpinalVerilog(ClockDomain.external("", withReset = false)(new Top))
     println("...........End")
-//    sys.exit(0)
   }
 }

@@ -10,6 +10,11 @@ from litex.build.lattice.programmer import FTPProg
 
 # IOs ----------------------------------------------------------------------------------------------
 
+_connector = [
+    ("GPIO_P", "B11 A10  A9  B9  A7  C8  C6  A6  A4  A2  C4  F4  G3  H4"),
+    ("GPIO_N", "C11 A11 B10 C10  A8  B8  C7  B6  A5  B1  B4  E3  F3  G5"),
+]
+
 _io_common = [
     # Clk / Rst
     ("clk25", 0, Pins("G2"), IOStandard("LVCMOS33")),
@@ -48,6 +53,22 @@ _io_common = [
         Subsignal("cke",   Pins("F20")),
         Subsignal("ba",    Pins("P19 N20")),
         Subsignal("dm",    Pins("U19 E20")),
+        IOStandard("LVCMOS33"),
+        Misc("SLEWRATE=FAST"),
+    ),
+
+
+    ("conn", 0,
+        Subsignal("p",
+          Pins(
+            "B11 A10  A9  B9  A7  C8  C6  A6  A4  A2  C4  F4  G3  H4"
+          )
+        ),
+        Subsignal("n",
+          Pins(
+            "C11 A11 B10 C10  A8  B8  C7  B6  A5  B1  B4  E3  F3  G5"
+          )
+        ),
         IOStandard("LVCMOS33"),
         Misc("SLEWRATE=FAST"),
     ),
@@ -187,7 +208,7 @@ class Platform(LatticePlatform):
         assert device in ["LFE5U-12F", "LFE5U-25F", "LFE5U-45F", "LFE5U-85F"]
         assert revision in ["1.7", "2.0"]
         _io = _io_common + {"1.7": _io_1_7, "2.0": _io_2_0}[revision]
-        LatticePlatform.__init__(self, device + "-6BG381C", _io, toolchain=toolchain, **kwargs)
+        LatticePlatform.__init__(self, device + "-6BG381C", _io, _connector, toolchain=toolchain, **kwargs)
 
     def create_programmer(self):
         return FTPProg(ip='192.168.0.144')

@@ -16,23 +16,12 @@ from litex.soc.cores.led import LedChaser
 from litex.soc.cores.clock import *
 from litex.build.generic_platform import *
 
-my_connector = [
-  ("MYGPIO", "R18 V1 U1 H16"),
-]
-
-my_feather_btns = [
-  ("btn_ctrl", 0,
-      Subsignal("up"   , Pins("MYGPIO:0"), IOStandard("LVCMOS33"), Misc("PULLMODE=DOWN")),
-      Subsignal("down" , Pins("MYGPIO:1"), IOStandard("LVCMOS33"), Misc("PULLMODE=DOWN")),
-      Subsignal("left" , Pins("MYGPIO:2"), IOStandard("LVCMOS33"), Misc("PULLMODE=DOWN")),
-      Subsignal("right", Pins("MYGPIO:3"), IOStandard("LVCMOS33"), Misc("PULLMODE=DOWN")),
-  )
-]
-
-ulx3s._io_common += [
-  ("my_leds", 0,
-      Subsignal("leds", Pins("B2 C2 C1 D2 D1 E2 E1 H3")), IOStandard("LVCMOS33")
-  )
+feather_serial = [
+    ("serial", 0,
+        Subsignal("tx", Pins("GPIO_P:0")),
+        Subsignal("rx", Pins("GPIO_N:0")),
+        IOStandard("LVCMOS33")
+    )
 ]
 
 class _CRG(Module):
@@ -59,7 +48,7 @@ class _CRG(Module):
         pll.create_clkout(self.cd_sys_50MHz, 50e6)
 
 class Top(Module):
-  def __init__(self, leds, btns):
+  def __init__(self, leds, btns, serial):
     self.submodules.crg = _CRG(plat)
 
     self.specials += Instance(
@@ -73,10 +62,14 @@ class Top(Module):
             i_clk_20MHz = ClockSignal("sys_10MHz"),
 
             i_btns      = Cat(* btns),
-            o_leds      = Cat(* leds)
+            o_leds      = Cat(* leds),
+
+            i_uart_rx   = serial.rx,
+            o_uart_tx   = serial.tx,
     )
 
-    ###############################
+##############################################################
+##############################################################
 plat = ulx3s.Platform(device="LFE5U-85F")
 
 vdirs = [ os.path.dirname(__file__), "design/spinalhdl/output" ]
@@ -95,7 +88,10 @@ btns = [
          plat.request("user_btn"),
        ]
 
-top = Top(leds, btns)
+plat.add_extension(feather_serial)
+serial = plat.request("serial")
+
+top = Top(leds, btns, serial)
 
 parser = argparse.ArgumentParser(description="ULX3S Board")
 parser.add_argument("--build", action="store_true", help="Build bitstream")
