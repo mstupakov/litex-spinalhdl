@@ -76,17 +76,7 @@ class Top(Module):
             o_leds      = Cat(* leds)
     )
 
-parser = argparse.ArgumentParser(description="MyBoard Args")
-
-parser.add_argument("--build", action="store_true", help="Build bitstream")
-parser.add_argument("--upload", action="store_true", help="Upload bitstream")
-parser.add_argument("-p", "--parallel", default=1, type=int,
-                    help="number of parallel builds (default: %(default)s)")
-
-args = parser.parse_args()
-print("Paralel: ", args.parallel)
-
-
+    ###############################
 plat = ulx3s.Platform(device="LFE5U-85F")
 
 vdirs = [ os.path.dirname(__file__), "design/spinalhdl/output" ]
@@ -94,14 +84,7 @@ vdirs = [ os.path.dirname(__file__), "design/spinalhdl/output" ]
 [plat.add_source_dir(p)           for p in vdirs]
 
 leds = [
-         plat.request("user_led", 0),
-         plat.request("user_led", 1),
-         plat.request("user_led", 2),
-         plat.request("user_led", 3),
-         plat.request("user_led", 4),
-         plat.request("user_led", 5),
-         plat.request("user_led", 6),
-         plat.request("user_led", 7),
+         plat.request_all("user_led")
        ]
 
 btns = [
@@ -114,7 +97,14 @@ btns = [
 
 top = Top(leds, btns)
 
-plat.build(top, compress=True, run=args.build)
+parser = argparse.ArgumentParser(description="ULX3S Board")
+parser.add_argument("--build", action="store_true", help="Build bitstream")
+parser.add_argument("--upload", action="store_true", help="Upload bitstream")
+
+args = parser.parse_args()
+
+if args.build:
+  plat.build(top, compress=True, run=args.build)
 
 if args.upload:
   plat.create_programmer().load_bitstream('build/top.bit')
