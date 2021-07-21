@@ -57,22 +57,6 @@ _io_common = [
         Misc("SLEWRATE=FAST"),
     ),
 
-
-    ("conn", 0,
-        Subsignal("p",
-          Pins(
-            "B11 A10  A9  B9  A7  C8  C6  A6  A4  A2  C4  F4  G3  H4"
-          )
-        ),
-        Subsignal("n",
-          Pins(
-            "C11 A11 B10 C10  A8  B8  C7  B6  A5  B1  B4  E3  F3  G5"
-          )
-        ),
-        IOStandard("LVCMOS33"),
-        Misc("SLEWRATE=FAST"),
-    ),
-
     # GPIOs
     ("gpio", 0,
         Subsignal("p", Pins("B11")),

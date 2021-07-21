@@ -17,10 +17,9 @@ from litex.soc.cores.clock import *
 from litex.build.generic_platform import *
 
 feather_serial = [
-    ("serial", 0,
-        Subsignal("tx", Pins("GPIO_P:0")),
-        Subsignal("rx", Pins("GPIO_N:0")),
-        IOStandard("LVCMOS33")
+    ("gpio_serial", 0,
+        Subsignal("tx", Pins("GPIO_P:0"), IOStandard("LVCMOS33")),
+        Subsignal("rx", Pins("GPIO_N:0"), IOStandard("LVCMOS33")),
     )
 ]
 
@@ -89,7 +88,7 @@ btns = [
        ]
 
 plat.add_extension(feather_serial)
-serial = plat.request("serial")
+serial = plat.request("gpio_serial")
 
 top = Top(leds, btns, serial)
 
