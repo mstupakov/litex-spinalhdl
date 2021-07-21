@@ -29,6 +29,12 @@ my_feather_btns = [
   )
 ]
 
+ulx3s._io_common += [
+  ("my_leds", 0,
+      Subsignal("leds", Pins("B2 C2 C1 D2 D1 E2 E1 H3")), IOStandard("LVCMOS33")
+  )
+]
+
 class _CRG(Module):
     def __init__(self, platform):
         self.clock_domains.cd_sys = ClockDomain()
@@ -71,20 +77,15 @@ class Top(Module):
     )
 
 parser = argparse.ArgumentParser(description="MyBoard Args")
+
 parser.add_argument("--build", action="store_true", help="Build bitstream")
 parser.add_argument("--upload", action="store_true", help="Upload bitstream")
 parser.add_argument("-p", "--parallel", default=1, type=int,
                     help="number of parallel builds (default: %(default)s)")
+
 args = parser.parse_args()
 print("Paralel: ", args.parallel)
-##builder_args(parser)
-#
-#exit()
 
-ulx3s._io_common += [
-    ("my_leds", 0,
-        Subsignal("leds", Pins("B2 C2 C1 D2 D1 E2 E1 H3")), IOStandard("LVCMOS33")
-    ),]
 
 plat = ulx3s.Platform(device="LFE5U-85F")
 
@@ -113,8 +114,6 @@ btns = [
 
 top = Top(leds, btns)
 
-#print(verilog.convert(top, ios={}))
-#print(verilog.convert(top, ios={led0, led5}))
 plat.build(top, compress=True, run=args.build)
 
 if args.upload:
