@@ -18,8 +18,8 @@ from litex.build.generic_platform import *
 
 feather_serial = [
     ("gpio_serial", 0,
-        Subsignal("tx", Pins("GPIO_P:0"), IOStandard("LVCMOS33")),
-        Subsignal("rx", Pins("GPIO_N:0"), IOStandard("LVCMOS33")),
+        Subsignal("rx", Pins("GPIO_P:11"), IOStandard("LVCMOS33")),
+        Subsignal("tx", Pins("GPIO_N:11"), IOStandard("LVCMOS33")),
     )
 ]
 

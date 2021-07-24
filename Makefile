@@ -14,10 +14,16 @@ build:
 upload: gen_spinal gen_migen
 	python3 generic.py --upload
 
+watch:
+	cd design/spinalhdl/ && sbt -client ~run
+
+shutdown:
+	cd design/spinalhdl/ && sbt -client shutdown
+
 clean:
 	ls design/spinalhdl/{target,project}/
 
-cleanall:
+cleanall: shutdown
 	-rm -rf build/ .bsp/ target/ project/ boards/__pycache__/ design/top/__pycache__/ \
 		design/spinalhdl/.bsp/ design/spinalhdl/target/ design/spinalhdl/project/ design/spinalhdl/output/*
 

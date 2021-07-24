@@ -136,7 +136,7 @@ _io_common = [
     ("ext1p", 0, Pins("A10"), IOStandard("LVCMOS33")),
 
     ("user_btn", 0, Pins("T1"),  IOStandard("LVCMOS33")),
-    ("user_btn", 1, Pins("R18"), IOStandard("LVCMOS33")),
+    ("user_btn", 1, Pins("R18"), IOStandard("LVCMOS33"), Misc("PULLMODE=DOWN")),
     ("user_btn", 2, Pins("V1"),  IOStandard("LVCMOS33")),
     ("user_btn", 3, Pins("U1"),  IOStandard("LVCMOS33")),
     ("user_btn", 4, Pins("H16"), IOStandard("LVCMOS33")),
