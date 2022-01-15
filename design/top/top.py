@@ -51,7 +51,8 @@ class Top(Module):
     self.submodules.crg = _CRG(plat)
 
     self.specials += Instance(
-            "SuperTop",
+            "SuperRtlTop",     #Verilog top
+            #"SuperSpinalTop", #Spinal top
 
             i_clk_25mhz = ClockSignal(),
             i_rst       = ResetSignal(),
@@ -71,7 +72,8 @@ class Top(Module):
 ##############################################################
 plat = ulx3s.Platform(device="LFE5U-85F")
 
-vdirs = [ os.path.dirname(__file__), "design/spinalhdl/output" ]
+vdirs  = [ os.path.dirname(__file__), "design/rtl" ]
+vdirs += [ os.path.dirname(__file__), "design/spinalhdl/output" ]
 [plat.add_verilog_include_path(p) for p in vdirs]
 [plat.add_source_dir(p)           for p in vdirs]
 

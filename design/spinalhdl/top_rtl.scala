@@ -39,7 +39,7 @@ class WishboneGpio(config : WishboneConfig, offset : Int, gpioWidth : Int)
   io.gpio.writeEnable.getDrivingReg init(0)
 }
 
-class SuperTop(FRQ_IN: HertzNumber = 10 MHz) extends Component {
+class SuperSpinalTop(FRQ_IN: HertzNumber = 10 MHz) extends Component {
   noIoPrefix()
 
   val io = new Bundle {
@@ -333,11 +333,11 @@ object MyTopLevelVerilog {
       device          = Device(vendor = "lattice"),
       targetDirectory = "output/",
       defaultClockDomainFrequency = FixedFrequency(25 MHz)
-    //).generate(new SuperTop(25 MHz)).printPruned()
-    ).generate(InOutWrapper(new SuperTop(25 MHz))).printPruned()
-    //showRtl(new SuperTop)
+    //).generate(new SuperSpinalTop(25 MHz)).printPruned()
+    ).generate(InOutWrapper(new SuperSpinalTop(25 MHz))).printPruned()
+    //showRtl(new SuperSpinalTop)
 
-  //  SpinalVerilog(InOutWrapper(new SuperTop(25 MHz)))
+  //  SpinalVerilog(InOutWrapper(new SuperSpinalTop(25 MHz)))
     println("...........End")
   }
 }
