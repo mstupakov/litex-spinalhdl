@@ -1,0 +1,51 @@
+- LiteX instalation:
+wget https://raw.githubusercontent.com/enjoy-digital/litex/master/litex_setup.py
+chmod +x litex_setup.py
+./litex_setup.py --init --install --user
+
+pip3 install meson
+./litex_setup.py --gcc=riscv
+
+
+- SpinalHDL instalation:
+sudo apt-get install default-jdk -y
+
+wget www.scala-lang.org/files/archive/scala-2.13.8.deb
+sudo dpkg -i scala*.deb
+
+echo "deb https://repo.scala-sbt.org/scalasbt/debian all main" | sudo tee /etc/apt/sources.list.d/sbt.list
+echo "deb https://repo.scala-sbt.org/scalasbt/debian /" | sudo tee /etc/apt/sources.list.d/sbt_old.list
+curl -sL "https://keyserver.ubuntu.com/pks/lookup?op=get&search=0x2EE0EA64E40A89B84B2DF73499E82A75642AC823" | sudo apt-key add
+sudo apt-get update
+sudo apt-get install sbt
+
+
+- ULX3S:
+  - Add bitstream programming via FTP (WiFi)
+    Patch: litex/build/lattice/programmer.py
+
+      # UJProg -------------------------------------------------------------------------------------------
+
+      class UJProg(GenericProgrammer):
+          needs_bitreverse = False
+
+          def load_bitstream(self, bitstream_file):
+              self.call(["ujprog", bitstream_file])
+
+      +class FTPProg(GenericProgrammer):
+      +    needs_bitreverse = False
+      +
+      +    def __init__(self, ip="192.168.0.144"):
+      +        self.ip = ip
+      +
+      +    def load_bitstream(self, bitstream_file):
+      +        from ftplib import FTP
+      +        ftp = FTP(self.ip)
+      +        ftp.login()
+      +        ftp.storbinary('STOR fpga', open(bitstream_file, 'rb'))
+      +        ftp.close()
+
+      # EcpDapProgrammer -------------------------------------------------------------------------------
+
+  $ make upload # program ULX3S: 192.168.0.144
+
